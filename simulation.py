@@ -76,6 +76,15 @@ class Simulation:
         """
         return self.largest_aggregate_mass * self.largest_aggregate_water_fraction / self.initial_water_mass
 
+    @property
+    def simulation_key(self):
+        return "id{:04d}_v{:.1f}_a{:.0f}_m{:.0f}_g{:.1f}_wt{:.1f}_wp{:.1f}".format(
+            self.runid, self.vcode, self.alphacode, self.mcode, self.gammacode, self.wtcode, self.wpcode
+        )
+    
+    def __repr__(self):
+        return f"<Simulation '{self.simulation_key}'>"
+
     def load_params_from_dirname(self, dirname: str) -> None:
         params = dirname.split("_")
         self.runid = int(params[0][2:])
@@ -85,6 +94,7 @@ class Simulation:
         self.gammacode = float(params[4][1:])
         self.wtcode = float(params[5][2:])
         self.wpcode = float(params[6][2:])
+        assert dirname == self.simulation_key
 
     def load_params_from_spheres_ini_log(self, filename: str) -> None:
         with open(filename) as f:

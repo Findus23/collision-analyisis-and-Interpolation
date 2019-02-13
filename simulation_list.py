@@ -1,10 +1,13 @@
 import json
 import pickle
+from typing import List
 
 from simulation import Simulation
 
 
 class SimulationList:
+    simlist: List[Simulation]
+
     def __init__(self, simlist: list = None):
         if simlist is None:
             self.simlist = []
