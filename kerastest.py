@@ -8,6 +8,7 @@ from keras.engine.saving import load_model
 from keras.layers import Dense
 from keras.utils import plot_model
 from matplotlib import pyplot as plt
+from sklearn.preprocessing import StandardScaler
 
 from simulation import Simulation
 from simulation_list import SimulationList
@@ -21,6 +22,10 @@ test_data = simulations.simlist[800:]
 sim: Simulation
 print(np.array([[s.mcode, s.wpcode, s.wtcode, s.gammacode, s.alphacode, s.vcode] for s in train_data[:10]]))
 X = np.array([[s.mcode, s.wpcode, s.wtcode, s.gammacode, s.alphacode, s.vcode] for s in train_data])
+scaler = StandardScaler()
+scaler.fit(X)
+x = scaler.transform(X)
+print(x)
 Y = np.array([s.water_retention_both for s in train_data])
 X_test = np.array([[s.mcode, s.wpcode, s.wtcode, s.gammacode, s.alphacode, s.vcode] for s in test_data])
 Y_test = np.array([s.water_retention_both for s in test_data])
@@ -35,14 +40,14 @@ else:
 
     model = Sequential()
     model.add(Dense(6, input_dim=6, kernel_initializer='normal', activation='relu'))
-    model.add(Dense(4, kernel_initializer='normal', activation='relu'))
+    model.add(Dense(3, kernel_initializer='normal', activation='relu'))
     model.add(Dense(1, kernel_initializer='normal'))
     model.compile(loss='mean_squared_error', optimizer='adam')
 
     model.summary()
     plot_model(model, "model.png", show_shapes=True, show_layer_names=True)
 
-    model.fit(X, Y, epochs=200, callbacks=[tbCallBack], validation_split=0.05)
+    model.fit(x, Y, epochs=200, callbacks=[tbCallBack], validation_split=0.05)
 
     loss = model.evaluate(X_test, Y_test)
     print(loss)
@@ -59,10 +64,14 @@ gammacode = 1
 testinput = np.array([[mcode, wpcode, wtcode, gammacode, np.nan, np.nan]] * 100 * 100)
 testinput[::, 4] = xgrid.flatten()
 testinput[::, 5] = ygrid.flatten()
+testinput = scaler.transform(testinput)
+
 print(testinput)
 print(testinput.shape)
 testoutput = model.predict(testinput)
 outgrid = np.reshape(testoutput, (100, 100))
 
 plt.pcolormesh(xgrid, ygrid, outgrid, cmap="Blues", vmin=0, vmax=1)
+plt.colorbar()
+plt.savefig("keras.png")
 plt.show()
