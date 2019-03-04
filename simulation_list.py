@@ -2,6 +2,8 @@ import json
 import pickle
 from typing import List
 
+import numpy as np
+
 from simulation import Simulation
 
 
@@ -39,3 +41,14 @@ class SimulationList:
                 sim = Simulation.from_dict(json.loads(line))
                 simlist.append(sim)
         return simlist
+
+    @property
+    def as_matrix(self):
+        entrylist = []
+        for sim in self.simlist:
+            entrylist.append([sim.mcode, sim.wpcode, sim.wtcode, sim.gammacode, sim.alphacode, sim.vcode,sim.water_retention_both])
+        return np.asarray(entrylist)
+
+    @property
+    def matrix_labels(self):
+        return ["mcode", "wpcode", "wtcode", "gammacode", "alphacode", "vcode"]
