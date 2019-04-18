@@ -2,6 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from sklearn.decomposition import PCA
 from sklearn.preprocessing import StandardScaler
+
 np.set_printoptions(linewidth=1000, edgeitems=4)
 
 
@@ -33,6 +34,9 @@ print(pca.explained_variance_)  # n largest eigenvalues of covariance matrix
 print(pca.explained_variance_ratio_, "(as ratio)")
 print_heading("covariance")  ############################
 
+cov = np.cov(x.T)
+print(pca.get_covariance())
+print(np.allclose(pca.get_covariance(),cov))
 print(pca.get_covariance().shape)  # eigenvectors
 print(pca.get_covariance())
 
@@ -60,7 +64,7 @@ plt.show()
 # plot correclation matrix
 cov = pca.get_covariance()
 plt.matshow(cov)
-plt.xticks(range(len(labels)), labels,rotation=90)
+plt.xticks(range(len(labels)), labels, rotation=90)
 plt.yticks(range(len(labels)), labels)
 plt.colorbar()
 

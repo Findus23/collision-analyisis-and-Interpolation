@@ -40,7 +40,7 @@ mcode_default, gamma_default, wt_default, wp_default = [24.0, 1, 10.0, 10.0]
 datagrid = get_data(mcode_default, gamma_default, wt_default, wp_default)
 
 mesh = plt.pcolormesh(grid_x, grid_y, datagrid, cmap="Blues", vmin=0, vmax=1)  # type:QuadMesh
-
+plt.colorbar()
 print(type(mesh))
 
 axcolor = 'lightgoldenrodyellow'
@@ -74,16 +74,5 @@ s_gamma.on_changed(update)
 s_mcode.on_changed(update)
 s_wp.on_changed(update)
 s_wt.on_changed(update)
-
-# resetax = plt.axes([0.8, 0.025, 0.1, 0.04])
-# button = Button(resetax, 'Reset', color=axcolor, hovercolor='0.975')
-# 
-
-# def reset(event):
-#     sfreq.reset()
-#     samp.reset()
-# 
-# 
-# button.on_clicked(reset)
 
 plt.show()

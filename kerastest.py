@@ -25,8 +25,9 @@ X = np.array([[s.mcode, s.wpcode, s.wtcode, s.gammacode, s.alphacode, s.vcode] f
 scaler = StandardScaler()
 scaler.fit(X)
 x = scaler.transform(X)
-print(x)
+print(x.shape)
 Y = np.array([s.water_retention_both for s in train_data])
+print(Y.shape)
 X_test = np.array([[s.mcode, s.wpcode, s.wtcode, s.gammacode, s.alphacode, s.vcode] for s in test_data])
 Y_test = np.array([s.water_retention_both for s in test_data])
 tbCallBack = keras.callbacks.TensorBoard(log_dir='./logs', histogram_freq=0, batch_size=32, write_graph=True,
@@ -34,21 +35,19 @@ tbCallBack = keras.callbacks.TensorBoard(log_dir='./logs', histogram_freq=0, bat
                                          embeddings_layer_names=None, embeddings_metadata=None, embeddings_data=None,
                                          update_freq='epoch')
 
-if os.path.exists("model.hd5"):
+if os.path.exists("model.hd5") and False:
     model = load_model("model.hd5")
 else:
 
     model = Sequential()
     model.add(Dense(6, input_dim=6, kernel_initializer='normal', activation='relu'))
-    model.add(Dense(3, kernel_initializer='normal', activation='relu'))
+    model.add(Dense(4, kernel_initializer='normal', activation='relu'))
     model.add(Dense(1, kernel_initializer='normal'))
     model.compile(loss='mean_squared_error', optimizer='adam')
 
     model.summary()
     plot_model(model, "model.png", show_shapes=True, show_layer_names=True)
-
-    model.fit(x, Y, epochs=200, callbacks=[tbCallBack], validation_split=0.05)
-
+    model.fit(x, Y, epochs=200, callbacks=[tbCallBack], validation_split=0.02)
     loss = model.evaluate(X_test, Y_test)
     print(loss)
 
@@ -73,5 +72,5 @@ outgrid = np.reshape(testoutput, (100, 100))
 
 plt.pcolormesh(xgrid, ygrid, outgrid, cmap="Blues", vmin=0, vmax=1)
 plt.colorbar()
-plt.savefig("keras.png")
+plt.savefig("keras.png", transparent=True)
 plt.show()

@@ -27,8 +27,10 @@ plt.title("m={:3.0f}, gamma={:3.1f}, wt={:2.0f}, wp={:2.0f}\n".format(mcode, gam
 
 # plt.contourf(grid_x, grid_y, grid_c, N, cmap="Blues", vmin=0, vmax=1)
 plt.pcolormesh(grid_x, grid_y, grid_c, cmap="Blues", vmin=0, vmax=1)
-plt.colorbar().set_label("test")
-
-plt.scatter(data[:, 0], data[:, 1], c="black", cmap="Blues")
-plt.savefig("vis.png")
+plt.colorbar().set_label("water retention")
+# plt.scatter(data[:, 0], data[:, 1], c=values, cmap="Blues")
+plt.xlabel("impact angle $\\alpha$")
+plt.ylabel("velocity $v$")
+plt.tight_layout()
+plt.savefig("vis.png",transparent=True)
 plt.show()

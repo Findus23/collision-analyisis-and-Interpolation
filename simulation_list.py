@@ -46,9 +46,11 @@ class SimulationList:
     def as_matrix(self):
         entrylist = []
         for sim in self.simlist:
-            entrylist.append([sim.mcode, sim.wpcode, sim.wtcode, sim.gammacode, sim.alphacode, sim.vcode,sim.water_retention_both])
+            entrylist.append(
+                [sim.mcode, sim.wpcode, sim.wtcode, sim.gammacode, sim.alphacode, sim.vcode, sim.water_retention_both]
+            )
         return np.asarray(entrylist)
 
     @property
     def matrix_labels(self):
-        return ["mcode", "wpcode", "wtcode", "gammacode", "alphacode", "vcode"]
+        return ["mcode", "wpcode", "wtcode", "gammacode", "alphacode", "vcode", "water retention"]
