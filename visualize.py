@@ -4,33 +4,33 @@ from scipy.interpolate import griddata
 
 from simulation_list import SimulationList
 
-mcode, gamma, wt, wp = [24.0, 1, 10.0, 10.0]
+mcode, gamma, wt, wp = [22.0, 1, 10.0, 10.0]
 simlist = SimulationList.jsonlines_load()
 simulations = simlist.simlist
-print(simulations)
 
-simsubset = [sim for sim in simulations if
-             sim.mcode == mcode and sim.gammacode == gamma and sim.wtcode == wt and sim.wpcode == wp]
-
-data = np.array([[s.alphacode, s.vcode] for s in simsubset])
-values = np.array([s.water_retention_both for s in simsubset])
+data = np.array([[s.alphacode, s.vcode, s.mcode, s.gammacode, s.wtcode, s.wpcode] for s in simulations])
+values = np.array([s.water_retention_both for s in simulations])
 
 factor = 1
 
-grid_x, grid_y = np.mgrid[-0.5:60.5:100j, 0.5:5.5:100j]
+alpharange = np.linspace(-0.5, 60.5, 100)
+vrange = np.linspace(0.5, 5.5, 100)
+grid_alpha, grid_v = np.meshgrid(alpharange, vrange)
+
 N = factor * np.arange(0., 1.01, 0.01)
 
-print(grid_x)
-grid_c = griddata(data, values, (grid_x, grid_y), method="linear")
-print(grid_c)
+# print(grid_alpha)
+grid_result = griddata(data, values, (grid_alpha, grid_v, mcode, gamma, wt, wp), method="nearest")
+print(grid_alpha.shape)
+print(grid_result.shape)
 plt.title("m={:3.0f}, gamma={:3.1f}, wt={:2.0f}, wp={:2.0f}\n".format(mcode, gamma, wt, wp))
 
 # plt.contourf(grid_x, grid_y, grid_c, N, cmap="Blues", vmin=0, vmax=1)
-plt.pcolormesh(grid_x, grid_y, grid_c, cmap="Blues", vmin=0, vmax=1)
+plt.pcolormesh(grid_alpha, grid_v, grid_result, cmap="Blues", vmin=0, vmax=1)
 plt.colorbar().set_label("water retention")
 # plt.scatter(data[:, 0], data[:, 1], c=values, cmap="Blues")
 plt.xlabel("impact angle $\\alpha$")
 plt.ylabel("velocity $v$")
 plt.tight_layout()
-plt.savefig("vis.png",transparent=True)
+# plt.savefig("vis.png", transparent=True)
 plt.show()

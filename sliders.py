@@ -12,23 +12,16 @@ simulations = simlist.simlist
 for sim in simulations:
     print(sim.gammacode)
 
-grid_x, grid_y = np.mgrid[-0.5:60.5:100j, 0.5:5.5:100j]
+grid_x, grid_y = np.mgrid[-0.5:60.5:10j, 0.5:5.5:10j]
 
 
 def get_data(mcode, gamma, wt, wp):
     print([mcode, gamma, wt, wp])
-    simsubset = [sim for sim in simulations if
-                 sim.mcode == mcode and sim.gammacode == gamma and sim.wtcode == wt and sim.wpcode == wp]
 
-    if len(simsubset) == 0:
-        print("skip")
-        return False
+    data = np.array([[s.alphacode, s.vcode, s.mcode, s.gammacode, s.wtcode, s.wpcode] for s in simulations])
+    values = np.array([s.water_retention_both for s in simulations])
 
-    print(len(simsubset))
-    data = np.array([[s.alphacode, s.vcode] for s in simsubset])
-    values = np.array([s.water_retention_both for s in simsubset])
-
-    grid_c = griddata(data, values, (grid_x, grid_y), method="linear")
+    grid_c = griddata(data, values, (grid_x, grid_y, mcode, gamma, wt, wp), method="linear")
     return grid_c
 
 
@@ -49,13 +42,14 @@ ax_gamma = plt.axes([0.25, 0.15, 0.65, 0.03], facecolor=axcolor)
 ax_wt = plt.axes([0.25, 0.20, 0.65, 0.03], facecolor=axcolor)
 ax_wp = plt.axes([0.25, 0.25, 0.65, 0.03], facecolor=axcolor)
 
-s_mcode = Slider(ax_mcode, 'mcode', 21, 25, valinit=mcode_default, valstep=1)
-s_gamma = Slider(ax_gamma, 'gamma', 0.1, 1, valinit=gamma_default, valstep=0.1)
-s_wt = Slider(ax_wt, 'wt', 10, 20, valinit=wt_default, valstep=10)
-s_wp = Slider(ax_wp, 'wp', 10, 20, valinit=wp_default, valstep=10)
+s_mcode = Slider(ax_mcode, 'mcode', 21, 25, valinit=mcode_default)
+s_gamma = Slider(ax_gamma, 'gamma', 0.1, 1, valinit=gamma_default)
+s_wt = Slider(ax_wt, 'wt', 10, 20, valinit=wt_default)
+s_wp = Slider(ax_wp, 'wp', 10, 20, valinit=wp_default)
 
 
 def update(val):
+    print("start updating")
     mcode = s_mcode.val
     gamma = s_gamma.val
     wt = s_wt.val
@@ -66,7 +60,7 @@ def update(val):
     formatedgrid = datagrid[:-1, :-1]
 
     mesh.set_array(formatedgrid.ravel())
-
+    print("finished updating")
     fig.canvas.draw_idle()
 
 
