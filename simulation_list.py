@@ -52,5 +52,16 @@ class SimulationList:
         return np.asarray(entrylist)
 
     @property
+    def X(self):
+        return np.array([
+            [s.alphacode, s.vcode, 10 ** s.mcode, s.gammacode, s.wtcode, s.wpcode]
+            for s in self.simlist
+        ])
+
+    @property
+    def Y(self):
+        return np.array([s.water_retention_both for s in self.simlist])
+
+    @property
     def matrix_labels(self):
         return ["mcode", "wpcode", "wtcode", "gammacode", "alphacode", "vcode", "water retention"]
