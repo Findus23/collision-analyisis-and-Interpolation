@@ -1,7 +1,8 @@
 import numpy as np
 from matplotlib import pyplot as plt
-from scipy.interpolate import griddata
 
+from interpolators.griddata import GriddataInterpolator
+from interpolators.rbf import RbfInterpolator
 from simulation_list import SimulationList
 
 mcode, gamma, wt, wp = [22.0, 1, 10.0, 10.0]
@@ -11,16 +12,16 @@ simulations = simlist.simlist
 data = np.array([[s.alphacode, s.vcode, s.mcode, s.gammacode, s.wtcode, s.wpcode] for s in simulations])
 values = np.array([s.water_retention_both for s in simulations])
 
-factor = 1
-
 alpharange = np.linspace(-0.5, 60.5, 100)
 vrange = np.linspace(0.5, 5.5, 100)
 grid_alpha, grid_v = np.meshgrid(alpharange, vrange)
-
-N = factor * np.arange(0., 1.01, 0.01)
+interpolator = RbfInterpolator(data, values)
 
 # print(grid_alpha)
-grid_result = griddata(data, values, (grid_alpha, grid_v, mcode, gamma, wt, wp), method="nearest")
+grid_result = interpolator.interpolate(grid_alpha, grid_v, mcode, gamma, wt, wp)
+print(grid_result[0][30])
+# print(grid_result.shape)
+# exit()
 print(grid_alpha.shape)
 print(grid_result.shape)
 plt.title("m={:3.0f}, gamma={:3.1f}, wt={:2.0f}, wp={:2.0f}\n".format(mcode, gamma, wt, wp))
