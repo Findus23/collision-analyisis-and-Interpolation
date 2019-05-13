@@ -3,6 +3,7 @@ from matplotlib import pyplot as plt
 
 from CustomScaler import CustomScaler
 from interpolators.griddata import GriddataInterpolator
+from interpolators.rbf import RbfInterpolator
 from simulation_list import SimulationList
 
 
@@ -16,6 +17,7 @@ def main():
     scaler = CustomScaler()
     scaler.fit(data)
     scaled_data = scaler.transform_data(data)
+    # interpolator = RbfInterpolator(scaled_data, values)
     interpolator = GriddataInterpolator(scaled_data, values)
 
     alpharange = np.linspace(-0.5, 60.5, 100)
