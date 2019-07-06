@@ -1,3 +1,6 @@
+import json
+
+
 class Simulation:
 
     def __init__(self):
@@ -8,6 +11,7 @@ class Simulation:
         self.gammacode = None
         self.wtcode = None
         self.wpcode = None
+        self.type = None  # simulation set
         self.v = None  # v/v_esc
         self.alpha = None  # impact angle
         self.total_mass = None  # m
@@ -70,6 +74,10 @@ class Simulation:
                ) / self.initial_water_mass
 
     @property
+    def mass_retention_both(self) -> float:
+        return (self.largest_aggregate_mass + self.second_largest_aggregate_mass) / self.total_mass
+
+    @property
     def water_retention_main(self) -> float:
         """
         p['wretention1'] = p['mS1'] * p['wmfS1'] / (p['mp'] * p['wp'] + p['mt'] * p['wt'])
@@ -81,7 +89,7 @@ class Simulation:
         return "id{:04d}_v{:.1f}_a{:.0f}_m{:.0f}_g{:.1f}_wt{:.1f}_wp{:.1f}".format(
             self.runid, self.vcode, self.alphacode, self.mcode, self.gammacode, self.wtcode, self.wpcode
         )
-    
+
     def __repr__(self):
         return f"<Simulation '{self.simulation_key}'>"
 
@@ -95,6 +103,17 @@ class Simulation:
         self.wtcode = float(params[5][2:])
         self.wpcode = float(params[6][2:])
         assert dirname == self.simulation_key
+
+    def load_params_from_json(self, paramfile: str) -> None:
+        with open(paramfile) as f:
+            data = json.load(f)
+        self.runid = int(data["run_id"])
+        self.vcode = data["v_code"]
+        self.alphacode = data["alpha_code"]
+        self.mcode = data["m_code"]
+        self.gammacode = data["gamma_code"]
+        self.wtcode = data["wt_code"]
+        self.wpcode = data["wp_code"]
 
     def load_params_from_spheres_ini_log(self, filename: str) -> None:
         with open(filename) as f:
