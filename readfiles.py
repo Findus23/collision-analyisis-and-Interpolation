@@ -32,7 +32,7 @@ for set_type, directories in simulation_sets.items():
         sim.load_params_from_aggregates_txt(aggregates_file)
         sim.assert_all_loaded()
         simulations.append(sim)
-        print(vars(sim))
+        # print(vars(sim))
 
     print(len(simulations.simlist))
 

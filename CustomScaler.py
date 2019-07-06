@@ -11,8 +11,8 @@ class CustomScaler:
     def fit(self, data: np.ndarray) -> None:
         self.means = np.mean(data, 0)
         self.stds = np.std(data, 0)
-        print(self.means)
-        print(self.stds)
+        # print(self.means)
+        # print(self.stds)
 
     def _check_fitted(self):
         if (self.means is None) or (self.stds is None):

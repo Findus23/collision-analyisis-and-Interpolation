@@ -8,10 +8,18 @@ from simulation_list import SimulationList
 
 
 def main():
-    mcode, gamma, wt, wp = [10 ** 23, 1, 10.0, 10.0]
+    mcode, gamma, wt, wp = [10 ** 23, 0.7, 15/100, 15/100]
     simlist = SimulationList.jsonlines_load()
-
+    # for s in simlist.simlist:
+    #     if s.type!="original":
+    #         continue
+    #     print(s.wpcode,s.projectile_water_fraction)
+    # exit()
     data = simlist.X
+    print("-----")
+    print(len(data))
+    # print(data[0])
+    # exit()
     values = simlist.Y
 
     scaler = CustomScaler()
@@ -29,7 +37,7 @@ def main():
 
     grid_result = interpolator.interpolate(*scaled_parameters)
 
-    plt.title("m={:3.0f}, gamma={:3.1f}, wt={:2.0f}, wp={:2.0f}\n".format(mcode, gamma, wt, wp))
+    plt.title("m={:3.0e}, gamma={:3.1f}, wt={:2.0f}%, wp={:2.0f}%\n".format(mcode, gamma, wt*100, wp*100))
 
     # plt.contourf(grid_x, grid_y, grid_c, N, cmap="Blues", vmin=0, vmax=1)
     plt.pcolormesh(grid_alpha, grid_v, grid_result, cmap="Blues", vmin=0, vmax=1)

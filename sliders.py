@@ -34,7 +34,7 @@ grid_alpha, grid_v = np.meshgrid(alpharange, vrange)
 fig, ax = plt.subplots()
 plt.subplots_adjust(bottom=0.35)
 t = np.arange(0.0, 1.0, 0.001)
-mcode_default, gamma_default, wt_default, wp_default = [24.0, 1, 10.0, 10.0]
+mcode_default, gamma_default, wt_default, wp_default = [24.0, 1, 15.0, 15.0]
 
 datagrid = np.zeros_like(grid_alpha)
 
