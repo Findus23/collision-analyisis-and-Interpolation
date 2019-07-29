@@ -57,10 +57,9 @@ class SimulationList:
     def X(self):
         return np.array([
             [s.alpha, s.v, s.projectile_mass, s.gamma, s.target_water_fraction, s.projectile_water_fraction]
-            for s in self.simlist
+            for s in self.simlist if not s.testcase
         ])
 
     @property
     def Y(self):
-        return np.array([s.water_retention_both for s in self.simlist ])
-
+        return np.array([s.water_retention_both for s in self.simlist if not s.testcase])

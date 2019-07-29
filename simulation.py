@@ -85,6 +85,14 @@ class Simulation:
         return self.largest_aggregate_mass * self.largest_aggregate_water_fraction / self.initial_water_mass
 
     @property
+    def original_simulation(self) -> bool:
+        return self.type == "original"
+
+    @property
+    def testcase(self) -> bool:
+        return not self.original_simulation and 489 <= self.runid <= 1000  # TODO: replace with real last testcase
+
+    @property
     def simulation_key(self):
         return "id{:04d}_v{:.1f}_a{:.0f}_m{:.0f}_g{:.1f}_wt{:.1f}_wp{:.1f}".format(
             self.runid, self.vcode, self.alphacode, self.mcode, self.gammacode, self.wtcode, self.wpcode
