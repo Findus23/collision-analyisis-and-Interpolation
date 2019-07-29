@@ -1,5 +1,6 @@
 from numpy import ndarray
 
+
 class BaseInterpolator():
 
     def __init__(self, points, values):
