@@ -6,9 +6,7 @@ from simulation_list import SimulationList
 
 simulation_sets = {
     "original": sorted(glob("../data/*")),
-    # "first_try": sorted(glob("/media/lukas/d27a6119-721c-4584-983f-598c78432a14/simulations/first_try/results/*")),
-    # "new": sorted(glob("/media/lukas/d27a6119-721c-4584-983f-598c78432a14/simulations/results/*"))
-    "cloud":sorted(glob("../new_simulations/results/*"))
+    "cloud": sorted(glob("../../Bachelorarbeit_data/results/*"))
 }
 simulations = SimulationList()
 
