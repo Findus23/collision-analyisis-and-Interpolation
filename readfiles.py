@@ -29,6 +29,9 @@ for set_type, directories in simulation_sets.items():
         sim.load_params_from_spheres_ini_log(spheres_file)
         sim.load_params_from_aggregates_txt(aggregates_file)
         sim.assert_all_loaded()
+        if sim.rel_velocity<0 or sim.distance<0:
+            print(vars(sim))
+            raise ValueError("invalid aggregate data. Please rerun postprocessing")
         simulations.append(sim)
         # print(vars(sim))
 
