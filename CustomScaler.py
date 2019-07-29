@@ -4,6 +4,11 @@ import numpy as np
 
 
 class CustomScaler:
+    """
+    This is basically a simpler implementation of `sklearn.preprocessing.StandardScaler` that
+    allows transforming both parameter sets and the initial data.
+    """
+
     def __init__(self):
         self.means = None
         self.stds = None
