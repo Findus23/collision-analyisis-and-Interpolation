@@ -16,8 +16,9 @@ class RbfInterpolator(BaseInterpolator):
         if not alpha.shape:
             return self.rbfi(alpha, v, mcode, gamma, wt, wp)
         else:
+            size = alpha.shape[0]
             results = np.zeros_like(alpha)
             for x in range(alpha.shape[0]):
                 for y in range(alpha.shape[0]):
-                    results[99 - x][99 - y] = self.rbfi(alpha[0][x], v[y][0], mcode, gamma, wt, wp)
+                    results[size - 1 - x][size - 1 - y] = self.rbfi(alpha[0][x], v[y][0], mcode, gamma, wt, wp)
             return results
