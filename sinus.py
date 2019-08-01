@@ -1,3 +1,6 @@
+"""
+This has nothing to do with the rest, but is just a very simple test if I understand pcolormesh correctly.
+"""
 import numpy as np
 from matplotlib import pyplot as plt
 
