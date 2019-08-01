@@ -90,7 +90,7 @@ class Simulation:
 
     @property
     def testcase(self) -> bool:
-        return not self.original_simulation and 489 <= self.runid <= 1000  # TODO: replace with real last testcase
+        return not self.original_simulation and 529 <= self.runid <= 631
 
     @property
     def simulation_key(self):

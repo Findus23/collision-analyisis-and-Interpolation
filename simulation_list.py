@@ -46,10 +46,10 @@ class SimulationList:
     def as_matrix(self):
         entrylist = []
         for sim in self.simlist:
-            if sim.type == "original":
+            if not sim.testcase:
                 entrylist.append(
-                    [sim.mcode, sim.wpcode, sim.wtcode, sim.gammacode, sim.alphacode, sim.vcode,
-                     sim.water_retention_both]
+                    [sim.alpha, sim.v, sim.projectile_mass, sim.gamma, sim.target_water_fraction,
+                     sim.projectile_water_fraction, sim.water_retention_both]
                 )
         return np.asarray(entrylist)
 
