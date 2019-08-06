@@ -30,6 +30,13 @@ for set_type, directories in simulation_sets.items():
         sim.load_params_from_aggregates_txt(aggregates_file)
         sim.assert_all_loaded()
         if sim.rel_velocity < 0 or sim.distance < 0:
+            # Sometimes in the old dataset the second object wasn't detected.
+            # To be save, we'll exclude them
+            print(vars(sim))
+            continue
+        if sim.largest_aggregate_water_fraction < 0:
+            # a handful of simulations had a typo in the aggregates simulations.
+            # to fix those rerun aggregates on all of them
             print(vars(sim))
             raise ValueError("invalid aggregate data. Please rerun postprocessing")
         simulations.append(sim)
