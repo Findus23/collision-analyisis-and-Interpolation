@@ -47,7 +47,6 @@ tbCallBack = keras.callbacks.TensorBoard(log_dir='./logs/{}'.format(random.randi
 if os.path.exists("model.hd5"):
     model = load_model("model.hd5")
 else:
-
     model = Sequential()
     model.add(Dense(6, input_dim=6, activation='relu'))
     model.add(Dense(4, kernel_initializer='normal', activation='relu'))
