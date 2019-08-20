@@ -1,21 +1,11 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.collections import QuadMesh
-from matplotlib.text import Text
 from matplotlib.widgets import Slider, Button
-from scipy.interpolate import griddata
 
 from CustomScaler import CustomScaler
-from interpolators.griddata import GriddataInterpolator
+from interpolators.rbf import RbfInterpolator
 from simulation_list import SimulationList
-
-
-def get_data(mcode, gamma, wt, wp):
-    print([mcode, gamma, wt, wp])
-
-    grid_c = griddata(data, values, (grid_x, grid_y, mcode, gamma, wt, wp), method="linear")
-    return grid_c
-
 
 simlist = SimulationList.jsonlines_load()
 
@@ -25,7 +15,7 @@ values = simlist.Y
 scaler = CustomScaler()
 scaler.fit(data)
 scaled_data = scaler.transform_data(data)
-interpolator = GriddataInterpolator(scaled_data, values)
+interpolator = RbfInterpolator(scaled_data, values)
 
 alpharange = np.linspace(-0.5, 60.5, 100)
 vrange = np.linspace(0.5, 5.5, 100)
@@ -65,12 +55,12 @@ def update(val):
     gamma = s_gamma.val
     wt = s_wt.val
     wp = s_wp.val
-    parameters = [grid_alpha, grid_v, 10 ** mcode, gamma, wt, wp]
+    parameters = [grid_alpha, grid_v, 10 ** mcode, gamma, wt/100, wp/100]
     scaled_parameters = list(scaler.transform_parameters(parameters))
 
     datagrid = interpolator.interpolate(*scaled_parameters)
     print(datagrid)
-    print(np.isnan(datagrid).sum()/(100*100))
+    print(np.isnan(datagrid).sum() / (100 * 100))
     if not isinstance(datagrid, np.ndarray):
         return False
     formatedgrid = datagrid[:-1, :-1]
