@@ -69,10 +69,10 @@ else:
 xrange = np.linspace(-0.5, 60.5, 100)
 yrange = np.linspace(0.5, 5.5, 100)
 xgrid, ygrid = np.meshgrid(xrange, yrange)
-mcode = 1e23
+mcode = 1e24
 wpcode = 15 / 100
 wtcode = 15 / 100
-gammacode = 0.7
+gammacode = 0.6
 testinput = np.array([[np.nan, np.nan, mcode, gammacode, wtcode, wpcode]] * 100 * 100)
 testinput[::, 0] = xgrid.flatten()
 testinput[::, 1] = ygrid.flatten()
@@ -82,8 +82,15 @@ print(testinput)
 print(testinput.shape)
 testoutput = model.predict(testinput)
 outgrid = np.reshape(testoutput, (100, 100))
+print("minmax")
+print(np.nanmin(outgrid), np.nanmax(outgrid))
 
-plt.pcolormesh(xgrid, ygrid, outgrid, cmap="Blues", vmin=0, vmax=1)
-plt.colorbar()
-plt.savefig("keras.png", transparent=True)
+plt.imshow(outgrid, interpolation='none', cmap="Blues", aspect="auto", origin="lower", vmin=0, vmax=1,
+           extent=[xgrid.min(), xgrid.max(), ygrid.min(), ygrid.max()])
+
+plt.colorbar().set_label("water retention fraction")
+plt.xlabel("impact angle $\\alpha$ [$^{\circ}$]")
+plt.ylabel("velocity $v$ [$v_{esc}$]")
+plt.tight_layout()
+plt.savefig("../arbeit/images/plots/nn2.pdf")
 plt.show()
