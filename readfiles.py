@@ -39,6 +39,10 @@ for set_type, directories in simulation_sets.items():
             # to fix those rerun aggregates on all of them
             print(vars(sim))
             raise ValueError("invalid aggregate data. Please rerun postprocessing")
+        if sim.water_retention_both < 0 or sim.water_retention_both > 1:
+            print(vars(sim))
+            print(sim.water_retention_both)
+            raise ValueError("water retention is invalid")
         simulations.append(sim)
         # print(vars(sim))
 
