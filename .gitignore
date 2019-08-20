@@ -9,3 +9,4 @@ logs/
 *.pdf
 *.npy
 accuracy.csv
+grid-testing-cache*
