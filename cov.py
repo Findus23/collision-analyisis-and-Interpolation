@@ -39,7 +39,7 @@ plt.barh(range(len(simple_cov)), simple_cov)
 # ax.set_xticks(index + bar_width / 2)
 ax.set_yticklabels([0] + labels)
 ax2 = ax.twinx()  # type:Axes
-ax2.set_yticklabels([0] + ["{:.2f}".format(a) for a in simple_cov])
+ax2.set_yticklabels([0] + ["({:.2f})".format(a) for a in simple_cov])
 ax2.set_ylim(ax.get_ylim())
 plt.tight_layout()
 plt.savefig("../arbeit/images/cov.pdf")
