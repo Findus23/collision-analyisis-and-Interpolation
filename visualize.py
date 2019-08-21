@@ -47,7 +47,7 @@ def main():
     # plt.pcolormesh(grid_alpha, grid_v, grid_result, cmap="Blues", vmin=0, vmax=1)
     plt.imshow(grid_result, interpolation='none', cmap=cmap, aspect="auto", origin="lower", vmin=0, vmax=1,
                extent=[grid_alpha.min(), grid_alpha.max(), grid_v.min(), grid_v.max()])
-    plt.colorbar().set_label("water retention fraction")
+    plt.colorbar().set_label("water retention fraction" if water_fraction else "core mass retention fraction")
     # plt.scatter(data[:, 0], data[:, 1], c=values, cmap="Blues")
     plt.xlabel("impact angle $\\alpha$ [$^{\circ}$]")
     plt.ylabel("velocity $v$ [$v_{esc}$]")

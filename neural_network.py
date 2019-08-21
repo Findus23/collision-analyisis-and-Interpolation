@@ -93,7 +93,7 @@ cmap = "Blues" if water_fraction else "Oranges"
 plt.imshow(outgrid, interpolation='none', cmap=cmap, aspect="auto", origin="lower", vmin=0, vmax=1,
            extent=[xgrid.min(), xgrid.max(), ygrid.min(), ygrid.max()])
 
-plt.colorbar().set_label("water retention fraction")
+plt.colorbar().set_label("water retention fraction" if water_fraction else "core mass retention fraction")
 plt.xlabel("impact angle $\\alpha$ [$^{\circ}$]")
 plt.ylabel("velocity $v$ [$v_{esc}$]")
 plt.tight_layout()
