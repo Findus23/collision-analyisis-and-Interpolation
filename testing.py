@@ -5,6 +5,7 @@ import numpy as np
 from keras.engine.saving import load_model
 
 from CustomScaler import CustomScaler
+from config import water_fraction
 from interpolators.griddata import GriddataInterpolator
 from interpolators.rbf import RbfInterpolator
 from simulation import Simulation
@@ -14,7 +15,7 @@ simulations = SimulationList.jsonlines_load()
 
 scaler = CustomScaler()
 scaler.fit(simulations.X)
-model = load_model("model.hd5")
+model = load_model("model.hd5" if water_fraction else "model_mass.hd5")
 
 
 def squared_error(inter: float, correct: float) -> float:
@@ -53,8 +54,9 @@ rbf_squared_errors = []
 rbf_errors = []
 grid_squared_errors = []
 grid_errors = []
+cachefile="grid-testing-cache.json" if water_fraction else "grid-testing-cache-mass.json"
 try:
-    with open("grid-testing-cache.json") as f:
+    with open(cachefile) as f:
         raw_data = json.load(f)
         grid_testing_cache = {int(key): value for key, value in raw_data.items()}
 except FileNotFoundError:
@@ -83,7 +85,7 @@ for sim in simulations.simlist:
         if np.isnan(grid_output):
             grid_output = False
         grid_testing_cache[sim.runid] = grid_output
-        with open("grid-testing-cache.json", "w") as f:
+        with open(cachefile, "w") as f:
             json.dump(grid_testing_cache, f)
     if grid_output:
         grid_squared_errors.append(squared_error(grid_output, sim.water_retention_both))

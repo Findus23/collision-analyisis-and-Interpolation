@@ -60,8 +60,20 @@ class Simulation:
         return self.second_largest_aggregate_mass / self.projectile_mass
 
     @property
+    def projectile_stone_fraction(self):
+        return 1 - self.projectile_water_fraction
+
+    @property
+    def target_stone_fraction(self):
+        return 1 - self.target_water_fraction
+
+    @property
     def initial_water_mass(self) -> float:
         return self.projectile_mass * self.projectile_water_fraction + self.target_mass * self.target_water_fraction
+
+    @property
+    def initial_stone_mass(self) -> float:
+        return self.projectile_mass * self.projectile_stone_fraction + self.target_mass * self.target_stone_fraction
 
     @property
     def water_retention_both(self) -> float:
@@ -75,7 +87,10 @@ class Simulation:
 
     @property
     def mass_retention_both(self) -> float:
-        return (self.largest_aggregate_mass + self.second_largest_aggregate_mass) / self.total_mass
+        return (
+                       self.largest_aggregate_mass * (1 - self.largest_aggregate_water_fraction)
+                       + self.second_largest_aggregate_mass * (1 - self.second_largest_aggregate_water_fraction)
+               ) / (self.projectile_mass * (1-self.projectile_water_fraction) + self.target_mass * (1-self.target_water_fraction))
 
     @property
     def water_retention_main(self) -> float:

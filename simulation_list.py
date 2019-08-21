@@ -4,6 +4,7 @@ from typing import List
 
 import numpy as np
 
+from config import water_fraction
 from simulation import Simulation
 
 
@@ -62,4 +63,12 @@ class SimulationList:
 
     @property
     def Y(self):
+        return self.Y_water if water_fraction else self.Y_mass
+
+    @property
+    def Y_mass(self):
+        return np.array([s.mass_retention_both for s in self.simlist if not s.testcase])
+
+    @property
+    def Y_water(self):
         return np.array([s.water_retention_both for s in self.simlist if not s.testcase])
