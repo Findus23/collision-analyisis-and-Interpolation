@@ -76,7 +76,9 @@ ax3d.scatter(*testpoint, z_center, color="green")
 
 ax3d.plot_surface(X, Y, Z, color="lightgreen", alpha=0.4)
 
-
+fig1.tight_layout()
+fig2.tight_layout()
+fig3.tight_layout()
 fig1.savefig("../arbeit/images/vis2d1.pdf")
 fig2.savefig("../arbeit/images/vis2d2.pdf")
 fig3.savefig("../arbeit/images/vis2d3.pdf")

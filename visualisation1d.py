@@ -45,6 +45,6 @@ testy = b + a * testpoint
 
 ax2.plot(linex, liney, color="lightgreen", zorder=-2)
 ax2.scatter(testpoint, testy, color="green")
-
+plt.tight_layout()
 plt.savefig("../arbeit/images/vis1d.pdf")
 plt.show()
