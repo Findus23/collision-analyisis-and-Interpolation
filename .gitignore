@@ -1,4 +1,5 @@
 *.sh
+!cli.sh
 __pycache__/
 *.pickle
 *.jsonl

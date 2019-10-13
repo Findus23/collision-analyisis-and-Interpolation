@@ -14,7 +14,7 @@ requiredNamed.add_argument("-a", "--alpha", type=float, required=True, help="the
 requiredNamed.add_argument("-v", "--velocity", type=float, required=True,
                            help="the impact velocity [AU/58d]")
 requiredNamed.add_argument("-mp", "--projectile-mass", type=float, required=True, help="mass of the projectile [M_⊙]")
-requiredNamed.add_argument("-mt", "--target-mass", type=float, help="mass of the projectile [M_⊙]")
+requiredNamed.add_argument("-mt", "--target-mass", type=float, required=True, help="mass of the projectile [M_⊙]")
 
 # Massen in Sonnenmassen
 # gaussche Gravitationskonstante
@@ -24,7 +24,7 @@ requiredNamed.add_argument("-mt", "--target-mass", type=float, help="mass of the
 # beide Massen statt gamma
 
 args = parser.parse_args()
-# print(args)
+print(args)
 
 solar_mass = 1.98847542e+30  # kg
 ice_density = 0.9167 / 1000 * 100 ** 3  # TODO: check real numbers
@@ -66,7 +66,7 @@ const = 365.256 / (2 * pi)  # ~58.13
 
 velocity_si = velocity_original * astronomical_unit / const / (60 * 60 * 24)
 velocity = velocity_si / escape_velocity
-gamma = args.projectile_mass_sm / args.target_mass_sm
+gamma = projectile_mass_sm / target_mass_sm
 
 simulations = SimulationList.jsonlines_load()
 
