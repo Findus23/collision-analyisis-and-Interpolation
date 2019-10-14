@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+
+set -x
+
 targetdir="$HOME/tmp/cli"
 rm -r $targetdir
 mkdir -p $targetdir

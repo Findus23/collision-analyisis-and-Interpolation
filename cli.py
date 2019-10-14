@@ -7,6 +7,11 @@ from CustomScaler import CustomScaler
 from interpolators.rbf import RbfInterpolator
 from simulation_list import SimulationList
 
+
+def clamp(n, smallest, largest):
+    return max(smallest, min(n, largest))
+
+
 parser = argparse.ArgumentParser(description="interpolate water retention rate using RBF",
                                  epilog="returns water retention fraction and mass_retention fraction seperated by a newline")
 requiredNamed = parser.add_argument_group('required named arguments')
@@ -24,11 +29,10 @@ requiredNamed.add_argument("-mt", "--target-mass", type=float, required=True, he
 # beide Massen statt gamma
 
 args = parser.parse_args()
-print(args)
 
 solar_mass = 1.98847542e+30  # kg
-ice_density = 0.9167 / 1000 * 100 ** 3  # TODO: check real numbers
-basalt_density = 3 / 1000 * 100 ** 3
+ice_density = 0.917 / 1000 * 100 ** 3  # TODO: check real numbers
+basalt_density = 2.7 / 1000 * 100 ** 3
 water_fraction = 0.15
 
 alpha = args.alpha
@@ -38,8 +42,8 @@ projectile_water_fraction = water_fraction
 
 projectile_mass_sm = args.projectile_mass
 target_mass_sm = args.target_mass
-projectile_mass = projectile_mass_sm / solar_mass
-target_mass = target_mass_sm / solar_mass
+projectile_mass = projectile_mass_sm * solar_mass
+target_mass = target_mass_sm * solar_mass
 
 
 def core_radius(total_mass, water_fraction, density):
@@ -68,6 +72,16 @@ velocity_si = velocity_original * astronomical_unit / const / (60 * 60 * 24)
 velocity = velocity_si / escape_velocity
 gamma = projectile_mass_sm / target_mass_sm
 
+if alpha > 90:
+    alpha = 180 - alpha
+if gamma > 1:
+    gamma = 1 / gamma
+alpha = clamp(alpha, 0, 60)
+velocity = clamp(velocity, 1, 5)
+m_ceres = 9.393e+20
+m_earth = 5.9722e+24
+projectile_mass = clamp(projectile_mass, 2 * m_ceres, 2 * m_earth)
+gamma = clamp(gamma, 1, 1 / 10)
 simulations = SimulationList.jsonlines_load()
 
 scaler = CustomScaler()
