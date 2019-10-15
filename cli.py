@@ -1,4 +1,4 @@
-import argparse
+import sys
 from math import pi, sqrt
 
 from scipy.constants import G, astronomical_unit
@@ -12,36 +12,34 @@ def clamp(n, smallest, largest):
     return max(smallest, min(n, largest))
 
 
-parser = argparse.ArgumentParser(description="interpolate water retention rate using RBF",
-                                 epilog="returns water retention fraction and mass_retention fraction seperated by a newline")
-requiredNamed = parser.add_argument_group('required named arguments')
-requiredNamed.add_argument("-a", "--alpha", type=float, required=True, help="the impact angle [degrees]")
-requiredNamed.add_argument("-v", "--velocity", type=float, required=True,
-                           help="the impact velocity [AU/58d]")
-requiredNamed.add_argument("-mp", "--projectile-mass", type=float, required=True, help="mass of the projectile [M_⊙]")
-requiredNamed.add_argument("-mt", "--target-mass", type=float, required=True, help="mass of the projectile [M_⊙]")
+if len(sys.argv) < 2:
+    print("specify filename")
+    exit(1)
+if sys.argv[1] == "-h":
+    print("alpha\t\t\tthe impact angle \t[degrees]")
+    print("velocity\t\tthe impact velocity \t[AU/58d]")
+    print("projectile-mass\t\tmass of the projectile \t[M_⊙]")
+    print("target-mass\t\tmass of the projectile \t[M_⊙]")
+    exit()
 
-# Massen in Sonnenmassen
-# gaussche Gravitationskonstante
-# geschwindigkeiten in au/58d
-# radius aus der Masse
-# Winkel in Grad
-# beide Massen statt gamma
-
-args = parser.parse_args()
+with open(sys.argv[1]) as f:
+    entries = f.readline().split()
+    if len(entries) != 4:
+        print("file must contain 4 parameters")
+    argalpha, argvelocity, argmp, argmt = map(float, entries)
 
 solar_mass = 1.98847542e+30  # kg
 ice_density = 0.917 / 1000 * 100 ** 3  # TODO: check real numbers
 basalt_density = 2.7 / 1000 * 100 ** 3
 water_fraction = 0.15
 
-alpha = args.alpha
+alpha = argalpha
 
 target_water_fraction = water_fraction
 projectile_water_fraction = water_fraction
 
-projectile_mass_sm = args.projectile_mass
-target_mass_sm = args.target_mass
+projectile_mass_sm = argmp
+target_mass_sm = argmt
 projectile_mass = projectile_mass_sm * solar_mass
 target_mass = target_mass_sm * solar_mass
 
@@ -64,7 +62,7 @@ projectile_radius = total_radius(projectile_mass, projectile_water_fraction, ice
 
 escape_velocity = sqrt(2 * G * (target_mass + projectile_mass) / (target_radius + projectile_radius))
 
-velocity_original = args.velocity
+velocity_original = argvelocity
 
 const = 365.256 / (2 * pi)  # ~58.13
 
