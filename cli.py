@@ -29,7 +29,7 @@ with open(sys.argv[1]) as f:
     argalpha, argvelocity, argmp, argmt = map(float, entries)
 
 solar_mass = 1.98847542e+30  # kg
-ice_density = 0.917 / 1000 * 100 ** 3  # TODO: check real numbers
+ice_density = 0.917 / 1000 * 100 ** 3
 basalt_density = 2.7 / 1000 * 100 ** 3
 water_fraction = 0.15
 
