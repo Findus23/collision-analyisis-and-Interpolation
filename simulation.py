@@ -25,6 +25,11 @@ class Simulation:
         self.second_largest_aggregate_water_fraction = None  # wmfS2
         self.rel_velocity = None  # vrel
         self.rel_velocity_per_esc_velocity = None  # vrel_over_vesc
+        self.desired_N = None
+        self.actual_N = None
+        self.relaxation_time = None
+        self.miluphcuda_time = None
+        self.setup_time = None
 
     @classmethod
     def from_dict(cls, data: dict):
@@ -90,7 +95,8 @@ class Simulation:
         return (
                        self.largest_aggregate_mass * (1 - self.largest_aggregate_water_fraction)
                        + self.second_largest_aggregate_mass * (1 - self.second_largest_aggregate_water_fraction)
-               ) / (self.projectile_mass * (1-self.projectile_water_fraction) + self.target_mass * (1-self.target_water_fraction))
+               ) / (self.projectile_mass * (1 - self.projectile_water_fraction) + self.target_mass * (
+                1 - self.target_water_fraction))
 
     @property
     def water_retention_main(self) -> float:
@@ -145,7 +151,9 @@ class Simulation:
             line = lines[i]
             if "Geometry:" in line:
                 self.v = float(lines[i + 2].split(" = ")[-1])
-                self.alpha = float(lines[i + 3].split(" = ")[-1][:-1])
+                print(lines[i + 3])
+                # self.alpha = float(lines[i + 3].split(" = ")[-1][:-1]) #for old format
+                self.alpha = float(lines[i + 3].split(" = ")[-1].split(" ")[0])
             if "Masses:" in line:
                 self.total_mass = float(lines[i + 2].split()[3])
                 self.projectile_mass = float(lines[i + 4].split()[3])
@@ -153,23 +161,34 @@ class Simulation:
             if "Mantle/shell mass fractions:" in line:
                 self.projectile_water_fraction = float(lines[i + 1].split()[7])
                 self.target_water_fraction = float(lines[i + 3].split()[7])
+            if "Particle numbers" in line:
+                self.desired_N = int(lines[i + 1].split()[3])
+                self.actual_N = int(lines[i + 1].split()[-1])
 
     def load_params_from_aggregates_txt(self, filename: str) -> None:
         with open(filename) as f:
             lines = [line.rstrip("\n") for line in f]
         for i in range(len(lines)):
             line = lines[i]
-            if "#largest aggregate" in line:
+            if "# largest aggregate" in line:
                 self.largest_aggregate_mass = float(lines[i + 2].split()[0])
                 self.largest_aggregate_water_fraction = float(lines[i + 2].split()[2])
-            if "#2nd largest aggregate" in line:
+            if "# 2nd-largest aggregate:" in line:
                 self.second_largest_aggregate_mass = float(lines[i + 2].split()[0])
                 self.second_largest_aggregate_water_fraction = float(lines[i + 2].split()[2])
-            if "#  distance" in line:
+            if "#    distance" in line:  # TODO: not sure if correct anymore
                 self.distance = float(lines[i + 1].split()[0])
                 self.rel_velocity = float(lines[i + 1].split()[1])
                 self.rel_velocity_per_esc_velocity = float(lines[i + 1].split()[2])
 
+    def load_params_from_pythontiming_json(self, filename: str) -> None:
+        with open(filename) as f:
+            data = json.load(f)
+            self.miluphcuda_time=data["miluphcuda"]
+            self.relaxation_time=data["relaxation"]
+            self.setup_time=data["setup"]
+
     def assert_all_loaded(self) -> None:
         for key, value in self.__dict__.items():
+            print(key, value)
             assert value is not None

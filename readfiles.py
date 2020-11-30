@@ -7,6 +7,7 @@ from simulation_list import SimulationList
 simulation_sets = {
     "original": sorted(glob("../data/*")),
     "cloud": sorted(glob("../../Bachelorarbeit_data/results/*"))
+    # "benchmark": sorted(glob("../../Bachelorarbeit_benchmark/results/*"))
 }
 simulations = SimulationList()
 
@@ -14,6 +15,7 @@ for set_type, directories in simulation_sets.items():
     for dir in directories:
         original = set_type == "original"
         spheres_file = dir + "/spheres_ini_log"
+        timings_file = dir + "/pythontimings.json"
         aggregates_file = dir + ("/sim/aggregates.txt" if original else "/aggregates.txt")
         if not path.exists(spheres_file) or not path.exists(aggregates_file):
             print(f"skipping {dir}")
@@ -28,6 +30,7 @@ for set_type, directories in simulation_sets.items():
         sim.type = set_type
         sim.load_params_from_spheres_ini_log(spheres_file)
         sim.load_params_from_aggregates_txt(aggregates_file)
+        sim.load_params_from_pythontiming_json(timings_file)
         sim.assert_all_loaded()
         if sim.rel_velocity < 0 or sim.distance < 0:
             # Sometimes in the old dataset the second object wasn't detected.
