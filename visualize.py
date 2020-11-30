@@ -3,13 +3,14 @@ from matplotlib import pyplot as plt, cm
 
 from CustomScaler import CustomScaler
 from config import water_fraction
-from interpolators.griddata import GriddataInterpolator
 from interpolators.rbf import RbfInterpolator
 from simulation_list import SimulationList
 
+plt.style.use('dark_background')
+
 
 def main():
-    mcode, gamma, wt, wp = [10 ** 24, 0.6, 15 / 100, 15 / 100]
+    mcode, gamma, wt, wp = [10 ** 22, 0.6, 15 / 100, 15 / 100]
     simlist = SimulationList.jsonlines_load()
     # for s in simlist.simlist:
     #     if s.type!="original":
@@ -26,8 +27,8 @@ def main():
     scaler = CustomScaler()
     scaler.fit(data)
     scaled_data = scaler.transform_data(data)
-    # interpolator = RbfInterpolator(scaled_data, values)
-    interpolator = GriddataInterpolator(scaled_data, values)
+    interpolator = RbfInterpolator(scaled_data, values)
+    # interpolator = GriddataInterpolator(scaled_data, values)
 
     alpharange = np.linspace(-0.5, 60.5, 300)
     vrange = np.linspace(0.5, 5.5, 300)
@@ -40,7 +41,7 @@ def main():
     print("minmax")
     print(np.nanmin(grid_result), np.nanmax(grid_result))
 
-    # plt.title("m={:3.0e}, gamma={:3.1f}, wt={:2.0f}%, wp={:2.0f}%\n".format(mcode, gamma, wt*100, wp*100))
+    plt.title("m={:3.0e}, gamma={:3.1f}, wt={:2.0f}%, wp={:2.0f}%\n".format(mcode, gamma, wt*100, wp*100))
     cmap = cm.Blues if water_fraction else cm.Oranges
     cmap.set_bad('white', 1.)  # show nan white
     # plt.contourf(grid_alpha, grid_v, grid_result, 100, cmap="Blues", vmin=0, vmax=1)
@@ -53,7 +54,7 @@ def main():
     plt.ylabel("velocity $v$ [$v_{esc}$]")
     plt.tight_layout()
     # plt.savefig("vis.png", transparent=True)
-    plt.savefig("../arbeit/images/plots/mass_griddata2.pdf")
+    plt.savefig("/home/lukas/tmp/test.svg", transparent=True)
     plt.show()
 
 
