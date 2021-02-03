@@ -1,6 +1,6 @@
 import json
-import os
 import pickle
+from pathlib import Path
 from typing import List
 
 import numpy as np
@@ -21,30 +21,25 @@ class SimulationList:
     def append(self, value: Simulation):
         self.simlist.append(value)
 
-    def save_path(self, extension):
-        script_dir = os.path.dirname(__file__)
-        rel_path = "save" + extension
-        return os.path.join(script_dir, rel_path)
-
-    def pickle_save(self):
-        with open(self.save_path(".pickle"), 'wb') as file:
+    def pickle_save(self, pickle_file: Path):
+        with pickle_file.open("wb") as file:
             pickle.dump(self.simlist, file)
 
     @classmethod
-    def pickle_load(cls):
+    def pickle_load(cls, pickle_file: Path):
         tmp = cls()
-        with open(cls.save_path(tmp, ".pickle"), 'rb') as file:
+        with pickle_file.open("rb") as file:
             return cls(pickle.load(file))
 
-    def jsonlines_save(self):
-        with open(self.save_path(".jsonl"), 'w') as file:
+    def jsonlines_save(self, jsonl_file: Path):
+        with jsonl_file.open("w") as file:
             for sim in self.simlist:
                 file.write(json.dumps(vars(sim)) + "\n")
 
     @classmethod
-    def jsonlines_load(cls):
+    def jsonlines_load(cls, jsonl_file: Path):
         simlist = cls()
-        with open(cls.save_path(simlist, ".jsonl"), 'r') as file:
+        with jsonl_file.open() as file:
             for line in file:
                 sim = Simulation.from_dict(json.loads(line))
                 simlist.append(sim)
