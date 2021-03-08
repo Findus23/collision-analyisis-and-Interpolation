@@ -1,3 +1,6 @@
+from copy import copy
+from pathlib import Path
+
 import numpy as np
 from matplotlib import pyplot as plt, cm
 
@@ -6,12 +9,13 @@ from config import water_fraction
 from interpolators.rbf import RbfInterpolator
 from simulation_list import SimulationList
 
-plt.style.use('dark_background')
+
+# plt.style.use('dark_background')
 
 
 def main():
-    mcode, gamma, wt, wp = [10 ** 22, 0.6, 15 / 100, 15 / 100]
-    simlist = SimulationList.jsonlines_load()
+    mcode, gamma, wt, wp = [10 ** 21, 0.6, 1e-5, 1e-5]
+    simlist = SimulationList.jsonlines_load(Path("rsmc_dataset.jsonl"))
     # for s in simlist.simlist:
     #     if s.type!="original":
     #         continue
@@ -41,8 +45,9 @@ def main():
     print("minmax")
     print(np.nanmin(grid_result), np.nanmax(grid_result))
 
-    plt.title("m={:3.0e}, gamma={:3.1f}, wt={:2.0f}%, wp={:2.0f}%\n".format(mcode, gamma, wt*100, wp*100))
-    cmap = cm.Blues if water_fraction else cm.Oranges
+    plt.title("m={:3.0e}, gamma={:3.1f}, wt={:2.0e}, wp={:2.0e}\n".format(mcode, gamma, wt, wp))
+    cmap = cm.get_cmap("Blues") if water_fraction else cm.get_cmap("Oranges")
+    cmap = copy(cmap)
     cmap.set_bad('white', 1.)  # show nan white
     # plt.contourf(grid_alpha, grid_v, grid_result, 100, cmap="Blues", vmin=0, vmax=1)
     # plt.pcolormesh(grid_alpha, grid_v, grid_result, cmap="Blues", vmin=0, vmax=1)

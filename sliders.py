@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.collections import QuadMesh
@@ -7,7 +9,7 @@ from CustomScaler import CustomScaler
 from interpolators.rbf import RbfInterpolator
 from simulation_list import SimulationList
 
-simlist = SimulationList.jsonlines_load()
+simlist = SimulationList.jsonlines_load(Path("rsmc_dataset.jsonl"))
 
 data = simlist.X
 values = simlist.Y
@@ -31,19 +33,19 @@ datagrid = np.zeros_like(grid_alpha)
 mesh = plt.pcolormesh(grid_alpha, grid_v, datagrid, cmap="Blues", vmin=0, vmax=1)  # type:QuadMesh
 plt.colorbar()
 
-axcolor = 'lightgoldenrodyellow'
-ax_mcode = plt.axes([0.25, 0.1, 0.65, 0.03], facecolor=axcolor)
-ax_gamma = plt.axes([0.25, 0.15, 0.65, 0.03], facecolor=axcolor)
-ax_wt = plt.axes([0.25, 0.20, 0.65, 0.03], facecolor=axcolor)
-ax_wp = plt.axes([0.25, 0.25, 0.65, 0.03], facecolor=axcolor)
+# axcolor = 'lightgoldenrodyellow'
+ax_mcode = plt.axes([0.25, 0.1, 0.65, 0.03])
+ax_gamma = plt.axes([0.25, 0.15, 0.65, 0.03])
+ax_wt = plt.axes([0.25, 0.20, 0.65, 0.03])
+ax_wp = plt.axes([0.25, 0.25, 0.65, 0.03])
 buttonax = plt.axes([0.8, 0.025, 0.1, 0.04])
-button = Button(buttonax, 'Update', color=axcolor, hovercolor='0.975')
+button = Button(buttonax, 'Update', hovercolor='0.975')
 # thetext = ax.text(-10, 0, "hello", fontsize=12) #type:Text
 
 s_mcode = Slider(ax_mcode, 'mcode', 21, 25, valinit=mcode_default)
 s_gamma = Slider(ax_gamma, 'gamma', 0.1, 1, valinit=gamma_default)
-s_wt = Slider(ax_wt, 'wt', 10, 20, valinit=wt_default)
-s_wp = Slider(ax_wp, 'wp', 10, 20, valinit=wp_default)
+s_wt = Slider(ax_wt, 'wt', 1e-5, 1e-4, valinit=wt_default)
+s_wp = Slider(ax_wp, 'wp', 1e-5, 1e-4, valinit=wp_default)
 
 
 def update(val):
@@ -55,7 +57,7 @@ def update(val):
     gamma = s_gamma.val
     wt = s_wt.val
     wp = s_wp.val
-    parameters = [grid_alpha, grid_v, 10 ** mcode, gamma, wt/100, wp/100]
+    parameters = [grid_alpha, grid_v, 10 ** mcode, gamma, wt / 100, wp / 100]
     scaled_parameters = list(scaler.transform_parameters(parameters))
 
     datagrid = interpolator.interpolate(*scaled_parameters)

@@ -18,11 +18,15 @@ class Simulation:
         self.projectile_mass = None  # mp
         self.target_mass = None  # mt
         self.projectile_water_fraction = None  # wp
+        self.projectile_core_fraction = None
         self.target_water_fraction = None  # wt
+        self.target_core_fraction = None
         self.largest_aggregate_mass = None  # mS1
         self.largest_aggregate_water_fraction = None  # wmfS1
+        self.largest_aggregate_core_fraction = None
         self.second_largest_aggregate_mass = None  # mS2
         self.second_largest_aggregate_water_fraction = None  # wmfS2
+        self.second_largest_aggregate_core_fraction = None
         self.rel_velocity = None  # vrel
         self.rel_velocity_per_esc_velocity = None  # vrel_over_vesc
         self.desired_N = None
@@ -58,6 +62,10 @@ class Simulation:
         return self.largest_aggregate_mass / self.target_mass
 
     @property
+    def largest_aggregate_mantle_fraction(self) -> float:
+        return 1 - self.largest_aggregate_core_fraction - self.largest_aggregate_water_fraction
+
+    @property
     def second_largest_aggregate_relative_mass(self) -> float:
         """
         p['mS2_over_mp'] = p['mS2'] / p['mp']
@@ -65,20 +73,29 @@ class Simulation:
         return self.second_largest_aggregate_mass / self.projectile_mass
 
     @property
-    def projectile_stone_fraction(self):
-        return 1 - self.projectile_water_fraction
+    def second_largest_aggregate_mantle_fraction(self) -> float:
+        return 1 - self.second_largest_aggregate_core_fraction - self.second_largest_aggregate_water_fraction
+
 
     @property
-    def target_stone_fraction(self):
-        return 1 - self.target_water_fraction
+    def projectile_mantle_fraction(self):
+        return 1 - self.projectile_water_fraction - self.projectile_core_fraction
+
+    @property
+    def target_mantle_fraction(self):
+        return 1 - self.target_water_fraction - self.target_core_fraction
 
     @property
     def initial_water_mass(self) -> float:
         return self.projectile_mass * self.projectile_water_fraction + self.target_mass * self.target_water_fraction
 
     @property
-    def initial_stone_mass(self) -> float:
-        return self.projectile_mass * self.projectile_stone_fraction + self.target_mass * self.target_stone_fraction
+    def initial_core_mass(self) -> float:
+        return self.projectile_mass * self.projectile_core_fraction + self.target_mass * self.target_core_fraction
+
+    @property
+    def initial_mantle_mass(self) -> float:
+        return self.projectile_mass * self.projectile_mantle_fraction + self.target_mass * self.target_mantle_fraction
 
     @property
     def water_retention_both(self) -> float:
@@ -91,12 +108,18 @@ class Simulation:
                ) / self.initial_water_mass
 
     @property
-    def mass_retention_both(self) -> float:
+    def core_retention_both(self) -> float:
         return (
-                       self.largest_aggregate_mass * (1 - self.largest_aggregate_water_fraction)
-                       + self.second_largest_aggregate_mass * (1 - self.second_largest_aggregate_water_fraction)
-               ) / (self.projectile_mass * (1 - self.projectile_water_fraction) + self.target_mass * (
-                1 - self.target_water_fraction))
+                       self.largest_aggregate_mass * self.largest_aggregate_core_fraction
+                       + self.second_largest_aggregate_mass * self.largest_aggregate_core_fraction
+               ) / self.initial_core_mass
+
+    @property
+    def mantle_retention_both(self) -> float:
+        return (
+                       self.largest_aggregate_mass * self.largest_aggregate_mantle_fraction
+                       + self.second_largest_aggregate_mass * self.largest_aggregate_mantle_fraction
+               ) / self.initial_mantle_mass
 
     @property
     def water_retention_main(self) -> float:
@@ -111,7 +134,7 @@ class Simulation:
 
     @property
     def testcase(self) -> bool:
-        return not self.original_simulation and 529 <= self.runid <= 631
+        return self.type == "cloud" and 529 <= self.runid <= 631
 
     @property
     def simulation_key(self):
@@ -184,9 +207,9 @@ class Simulation:
     def load_params_from_pythontiming_json(self, filename: str) -> None:
         with open(filename) as f:
             data = json.load(f)
-            self.miluphcuda_time=data["miluphcuda"]
-            self.relaxation_time=data["relaxation"]
-            self.setup_time=data["setup"]
+            self.miluphcuda_time = data["miluphcuda"]
+            self.relaxation_time = data["relaxation"]
+            self.setup_time = data["setup"]
 
     def assert_all_loaded(self) -> None:
         for key, value in self.__dict__.items():

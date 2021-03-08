@@ -11,3 +11,7 @@ logs/
 *.npy
 accuracy.csv
 grid-testing-cache*
+xl1
+xl2
+xl3
+xl12

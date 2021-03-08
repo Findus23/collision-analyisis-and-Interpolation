@@ -1,5 +1,6 @@
 from glob import glob
 from os import path
+from pathlib import Path
 
 from simulation import Simulation
 from simulation_list import SimulationList
@@ -51,4 +52,4 @@ for set_type, directories in simulation_sets.items():
 
     print(len(simulations.simlist))
 
-simulations.jsonlines_save()
+simulations.jsonlines_save(Path("output.jsonl"))

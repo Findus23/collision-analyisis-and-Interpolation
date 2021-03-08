@@ -65,12 +65,16 @@ class SimulationList:
 
     @property
     def Y(self):
-        return self.Y_water if water_fraction else self.Y_mass
+        return self.Y_water if water_fraction else self.Y_mantle
 
     @property
-    def Y_mass(self):
-        return np.array([s.mass_retention_both for s in self.simlist if not s.testcase])
+    def Y_core(self):
+        return np.array([s.core_retention_both for s in self.simlist if not s.testcase])
 
     @property
     def Y_water(self):
         return np.array([s.water_retention_both for s in self.simlist if not s.testcase])
+
+    @property
+    def Y_mantle(self):
+        return np.array([s.mantle_retention_both for s in self.simlist if not s.testcase])
