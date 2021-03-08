@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Iterator
 
 import numpy as np
 
@@ -28,7 +28,7 @@ class CustomScaler:
         return (data - self.means) / self.stds
         # return data
 
-    def transform_parameters(self, parameters: List) -> List:
+    def transform_parameters(self, parameters: List) -> Iterator[float]:
         self._check_fitted()
         if len(parameters) != len(self.means):
             raise ValueError("incorrect number of parameters")
