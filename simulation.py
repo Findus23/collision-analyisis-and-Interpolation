@@ -1,4 +1,5 @@
 import json
+from typing import Optional
 
 
 class Simulation:
@@ -76,7 +77,6 @@ class Simulation:
     def second_largest_aggregate_mantle_fraction(self) -> float:
         return 1 - self.second_largest_aggregate_core_fraction - self.second_largest_aggregate_water_fraction
 
-
     @property
     def projectile_mantle_fraction(self):
         return 1 - self.projectile_water_fraction - self.projectile_core_fraction
@@ -127,6 +127,12 @@ class Simulation:
         p['wretention1'] = p['mS1'] * p['wmfS1'] / (p['mp'] * p['wp'] + p['mt'] * p['wt'])
         """
         return self.largest_aggregate_mass * self.largest_aggregate_water_fraction / self.initial_water_mass
+
+    @property
+    def output_mass_fraction(self) -> Optional[float]:
+        if not self.largest_aggregate_mass:
+            return 0  # FIXME
+        return self.second_largest_aggregate_mass / self.largest_aggregate_mass
 
     @property
     def original_simulation(self) -> bool:

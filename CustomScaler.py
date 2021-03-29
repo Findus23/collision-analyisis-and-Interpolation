@@ -1,4 +1,4 @@
-from typing import List, Iterator
+from typing import List, Iterator, Optional
 
 import numpy as np
 
@@ -10,8 +10,8 @@ class CustomScaler:
     """
 
     def __init__(self):
-        self.means = None
-        self.stds = None
+        self.means: Optional[np.ndarray] = None
+        self.stds: Optional[np.ndarray] = None
 
     def fit(self, data: np.ndarray) -> None:
         self.means = np.mean(data, 0)
