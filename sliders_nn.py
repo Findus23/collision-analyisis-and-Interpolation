@@ -1,4 +1,4 @@
-from pathlib import Path
+import json
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,21 +8,21 @@ from matplotlib.widgets import Slider
 
 from CustomScaler import CustomScaler
 from network import Network
-from simulation_list import SimulationList
 
-simlist = SimulationList.jsonlines_load(Path("rsmc_dataset.jsonl"))
 resolution = 100
 
-data = simlist.X
-scaler = CustomScaler()
-scaler.fit(data)
+with open("pytorch_model.json") as f:
+    data = json.load(f)
+    scaler = CustomScaler()
+    scaler.means = np.array(data["means"])
+    scaler.stds = np.array(data["stds"])
 
 fig, ax = plt.subplots()
 plt.subplots_adjust(bottom=0.35)
 t = np.arange(0.0, 1.0, 0.001)
 mcode_default, gamma_default, wt_default, wp_default = [24.0, 1, 15.0, 15.0]
 
-alpharange = np.linspace(-0.5, 60.5, resolution)
+alpharange = np.linspace(0, 60, resolution)
 vrange = np.linspace(0.5, 5.5, resolution)
 grid_alpha, grid_v = np.meshgrid(alpharange, vrange)
 

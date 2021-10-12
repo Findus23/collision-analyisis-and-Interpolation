@@ -1,5 +1,8 @@
 import json
+from pathlib import Path
 from typing import Optional
+
+import yaml
 
 
 class Simulation:
@@ -132,7 +135,10 @@ class Simulation:
     def output_mass_fraction(self) -> Optional[float]:
         if not self.largest_aggregate_mass:
             return 0  # FIXME
-        return self.second_largest_aggregate_mass / self.largest_aggregate_mass
+        massive_size_relation=self.largest_aggregate_mass/self.target_mass
+        less_massive_size_relation=self.second_largest_aggregate_mass/self.projectile_mass
+        print("mr",massive_size_relation, less_massive_size_relation)
+        return less_massive_size_relation / massive_size_relation
 
     @property
     def original_simulation(self) -> bool:
@@ -149,7 +155,7 @@ class Simulation:
         )
 
     def __repr__(self):
-        return f"<Simulation '{self.simulation_key}'>"
+        return f"<Simulation '{vars(self)}'>"
 
     def load_params_from_dirname(self, dirname: str) -> None:
         params = dirname.split("_")
@@ -173,8 +179,18 @@ class Simulation:
         self.wtcode = data["wt_code"]
         self.wpcode = data["wp_code"]
 
-    def load_params_from_spheres_ini_log(self, filename: str) -> None:
-        with open(filename) as f:
+    def load_params_from_setup_txt(self, file: Path) -> None:
+        with file.open() as f:
+            data = yaml.safe_load(f)
+        # self.runid=data["ID"]
+        # self.vcode=data["vel_vesc_touching_ball"]
+        # self.alphacode=data["impact_angle_touching_ball"]
+        # self.mcode=data["M_tot"]
+        # self.gammacode=data["gamma"]
+        # TODO: maybe more needed?
+
+    def load_params_from_spheres_ini_log(self, filename: Path) -> None:
+        with filename.open() as f:
             lines = [line.rstrip("\n") for line in f]
         for i in range(len(lines)):
             line = lines[i]
@@ -191,20 +207,25 @@ class Simulation:
                 self.projectile_water_fraction = float(lines[i + 1].split()[7])
                 self.target_water_fraction = float(lines[i + 3].split()[7])
             if "Particle numbers" in line:
-                self.desired_N = int(lines[i + 1].split()[3])
+                self.desired_N = int(lines[i + 1].split()[4])
                 self.actual_N = int(lines[i + 1].split()[-1])
 
-    def load_params_from_aggregates_txt(self, filename: str) -> None:
-        with open(filename) as f:
+    def load_params_from_aggregates_txt(self, filename: Path) -> None:
+        with filename.open() as f:
             lines = [line.rstrip("\n") for line in f]
         for i in range(len(lines)):
             line = lines[i]
             if "# largest aggregate" in line:
-                self.largest_aggregate_mass = float(lines[i + 2].split()[0])
-                self.largest_aggregate_water_fraction = float(lines[i + 2].split()[2])
+                cols = lines[i + 2].split()
+                self.largest_aggregate_mass = float(cols[0])
+                self.largest_aggregate_core_fraction = float(cols[1])
+                self.largest_aggregate_water_fraction = 1 - float(cols[2]) - self.largest_aggregate_core_fraction
             if "# 2nd-largest aggregate:" in line:
-                self.second_largest_aggregate_mass = float(lines[i + 2].split()[0])
-                self.second_largest_aggregate_water_fraction = float(lines[i + 2].split()[2])
+                cols = lines[i + 2].split()
+                self.second_largest_aggregate_mass = float(cols[0])
+                self.second_largest_aggregate_core_fraction = float(cols[1])
+                self.second_largest_aggregate_water_fraction = 1 - float(
+                    cols[2]) - self.second_largest_aggregate_core_fraction
             if "#    distance" in line:  # TODO: not sure if correct anymore
                 self.distance = float(lines[i + 1].split()[0])
                 self.rel_velocity = float(lines[i + 1].split()[1])

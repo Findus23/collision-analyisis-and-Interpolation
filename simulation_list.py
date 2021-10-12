@@ -78,3 +78,7 @@ class SimulationList:
     @property
     def Y_mantle(self):
         return np.array([s.mantle_retention_both for s in self.simlist if not s.testcase])
+
+    @property
+    def Y_mass_fraction(self):
+        return np.array([s.output_mass_fraction for s in self.simlist if not s.testcase])

@@ -1,4 +1,3 @@
-from glob import glob
 from os import path
 from pathlib import Path
 
@@ -6,33 +5,27 @@ from simulation import Simulation
 from simulation_list import SimulationList
 
 simulation_sets = {
-    "original": sorted(glob("../data/*")),
-    "cloud": sorted(glob("../../Bachelorarbeit_data/results/*"))
+    "winter": sorted(Path("../../tmp/winter/").glob("*"))
+    # "original": sorted(glob("../data/*")),
+    # "cloud": sorted(glob("../../Bachelorarbeit_data/results/*"))
     # "benchmark": sorted(glob("../../Bachelorarbeit_benchmark/results/*"))
 }
 simulations = SimulationList()
 
 for set_type, directories in simulation_sets.items():
     for dir in directories:
-        original = set_type == "original"
-        spheres_file = dir + "/spheres_ini_log"
-        timings_file = dir + "/pythontimings.json"
-        aggregates_file = dir + ("/sim/aggregates.txt" if original else "/aggregates.txt")
+        print(dir)
+        spheres_file = dir / "spheres_ini.log"
+        aggregates_file = sorted(dir.glob("frames/aggregates.*"))[-1]
         if not path.exists(spheres_file) or not path.exists(aggregates_file):
             print(f"skipping {dir}")
             continue
-        if "id" not in dir and original:
-            continue
         sim = Simulation()
-        if set_type == "original":
-            sim.load_params_from_dirname(path.basename(dir))
-        else:
-            sim.load_params_from_json(dir + "/parameters.json")
+        sim.load_params_from_setup_txt(dir / "cfg.txt")
         sim.type = set_type
         sim.load_params_from_spheres_ini_log(spheres_file)
         sim.load_params_from_aggregates_txt(aggregates_file)
-        sim.load_params_from_pythontiming_json(timings_file)
-        sim.assert_all_loaded()
+        # sim.assert_all_loaded()
         if sim.rel_velocity < 0 or sim.distance < 0:
             # Sometimes in the old dataset the second object wasn't detected.
             # To be save, we'll exclude them
@@ -52,4 +45,4 @@ for set_type, directories in simulation_sets.items():
 
     print(len(simulations.simlist))
 
-simulations.jsonlines_save(Path("output.jsonl"))
+simulations.jsonlines_save(Path("winter.jsonl"))

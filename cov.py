@@ -1,10 +1,14 @@
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib.axes import Axes
+from pathlib import Path
 
 from simulation_list import SimulationList
 
-simulations = SimulationList.jsonlines_load()
+plt.style.use('dark_background')
+
+
+simulations = SimulationList.jsonlines_load(Path("rsmc_dataset.jsonl"))
 np.set_printoptions(linewidth=1000, edgeitems=4)
 
 x = simulations.as_matrix
@@ -35,12 +39,12 @@ plt.close()
 ax = plt.gca()  # type:Axes
 print(len(labels), len(simple_cov))
 print(simple_cov)
-plt.barh(range(len(simple_cov)), simple_cov)
+plt.barh(range(len(simple_cov)), simple_cov,color="#B3DE69")
 # ax.set_xticks(index + bar_width / 2)
 ax.set_yticklabels([0] + labels)
 ax2 = ax.twinx()  # type:Axes
 ax2.set_yticklabels([0] + ["({:.2f})".format(a) for a in simple_cov])
 ax2.set_ylim(ax.get_ylim())
 plt.tight_layout()
-plt.savefig("../arbeit/images/cov.pdf")
+plt.savefig("../arbeit/images/cov.pdf",transparent=True)
 plt.show()

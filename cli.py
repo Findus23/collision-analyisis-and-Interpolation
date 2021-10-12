@@ -76,7 +76,6 @@ if gamma > 1:
 alpha = clamp(alpha, 0, 60)
 velocity = clamp(velocity, 1, 5)
 
-
 m_ceres = 9.393e+20
 m_earth = 5.9722e+24
 projectile_mass = clamp(projectile_mass, 2 * m_ceres, 2 * m_earth)
@@ -88,14 +87,10 @@ scaler.fit(simulations.X)
 
 scaled_data = scaler.transform_data(simulations.X)
 water_interpolator = RbfInterpolator(scaled_data, simulations.Y_water)
-mass_interpolator = RbfInterpolator(scaled_data, simulations.Y_mass)
+mass_interpolator = RbfInterpolator(scaled_data, simulations.Y_mantle)
 
-testinput = [alpha, velocity, projectile_mass, gamma,
-             target_water_fraction, projectile_water_fraction]
+testinput = [32, 1, 7.6e22, 0.16, 0.15, 0.15]
 
-with open("xl3", "w") as f:
-    f.write("# alpha velocity projectile_mass gamma target_water_fraction projectile_water_fraction\n")
-    f.write(" ".join(map(str, testinput)))
 
 scaled_input = list(scaler.transform_parameters(testinput))
 water_retention = water_interpolator.interpolate(*scaled_input)

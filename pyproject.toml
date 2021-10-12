@@ -6,15 +6,15 @@ authors = ["Lukas Winkler <git@lw1.at>"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
-scipy = "^1.5.4"
-numpy = "^1.19.4"
-matplotlib = "^3.3.3"
+scipy = "^1.6.1"
+numpy = "^1.19.0"
+matplotlib = "^3.3.4"
 tabulate = "^0.8.7"
+#Keras = "^2.4.3"
+#tensorflow = "^2.3.1"
+pydot = "^1.4.1"
 
-
-
-[tool.poetry.dev-dependencies]
-PyQt5 = "5.12.1"
+#"vext.pyqt5" = "^0.7.4"
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"

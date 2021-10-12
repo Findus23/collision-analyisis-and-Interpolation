@@ -73,7 +73,7 @@ def train():
     loss_train = []
     loss_vali = []
 
-    max_epochs = 500
+    max_epochs = 200
     epochs = 0
 
     fig: Figure = plt.figure()
@@ -128,6 +128,16 @@ def train():
         #     if a > b:  # overfitting on training data, stop training
         #         print("early stopping")
         #         break
+    np.savetxt("loss.txt", np.array([x_axis, loss_train, loss_vali]).T)
+    torch.save(network.state_dict(), "pytorch_model.zip")
+    with open("pytorch_model.json", "w") as f:
+        export_dict = {}
+        value_tensor: Tensor
+        for key, value_tensor in network.state_dict().items():
+            export_dict[key] = value_tensor.detach().tolist()
+        export_dict["means"] = scaler.means.tolist()
+        export_dict["stds"] = scaler.stds.tolist()
+        json.dump(export_dict, f)
     plt.ioff()
     model_test_y = []
     for x in x_test:
@@ -138,52 +148,9 @@ def train():
     plt.figure()
     plt.xlabel("model output")
     plt.ylabel("real data")
-    for i, name in enumerate(["shell","mantle","core","mass fraction"]):
-        plt.scatter(model_test_y[::, i], Y_test[::, i], s=0.2,label=name)
+    for i, name in enumerate(["shell", "mantle", "core", "mass fraction"]):
+        plt.scatter(model_test_y[::, i], Y_test[::, i], s=0.2, label=name)
     plt.legend()
-    plt.show()
-    torch.save(network.state_dict(), "pytorch_model.zip")
-    with open("pytorch_model.json", "w") as f:
-        export_dict = {}
-        value_tensor: Tensor
-        for key, value_tensor in network.state_dict().items():
-            export_dict[key] = value_tensor.detach().tolist()
-        export_dict["means"] = scaler.means.tolist()
-        export_dict["stds"] = scaler.stds.tolist()
-        json.dump(export_dict, f)
-
-    xrange = np.linspace(-0.5, 60.5, 300)
-    yrange = np.linspace(0.5, 5.5, 300)
-    xgrid, ygrid = np.meshgrid(xrange, yrange)
-    mcode = 1e24
-    wpcode = 1e-4
-
-    wtcode = 1e-4
-    gammacode = 0.6
-    testinput = np.array([[np.nan, np.nan, mcode, gammacode, wtcode, wpcode]] * 300 * 300)
-    testinput[::, 0] = xgrid.flatten()
-    testinput[::, 1] = ygrid.flatten()
-    testinput = scaler.transform_data(testinput)
-
-    print(testinput)
-    print(testinput.shape)
-    testoutput: Tensor = network(from_numpy(testinput).to(torch.float))
-    data = testoutput.detach().numpy()
-    outgrid = np.reshape(data[::, 0], (300, 300))
-    print("minmax")
-    print(np.nanmin(outgrid), np.nanmax(outgrid))
-    cmap = "Blues"
-    plt.figure()
-    plt.title(
-        "m={:3.0e}, gamma={:3.1f}, wt={:2.0f}%, wp={:2.0f}%\n".format(mcode, gammacode, wtcode * 100, wpcode * 100))
-    plt.imshow(outgrid, interpolation='none', cmap=cmap, aspect="auto", origin="lower", vmin=0, vmax=1,
-               extent=[xgrid.min(), xgrid.max(), ygrid.min(), ygrid.max()])
-
-    plt.colorbar().set_label("water retention fraction")
-    plt.xlabel("impact angle $\\alpha$ [$^{\circ}$]")
-    plt.ylabel("velocity $v$ [$v_{esc}$]")
-    plt.tight_layout()
-    # plt.savefig("/home/lukas/tmp/nn.svg", transparent=True)
     plt.show()
 
 
